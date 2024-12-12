@@ -4,8 +4,8 @@
 // @version      0.5
 // @description  Amazon ASIN CCChecker (Camel Camel Camel)
 // @match        *://*.amazon.*/*
-// @updateURL    https://raw.githubusercontent.com/DeinBenutzername/DeinProjekt/main/dein-skript.user.js
-// @downloadURL  https://raw.githubusercontent.com/DeinBenutzername/DeinProjekt/main/dein-skript.user.js
+// @updateURL    https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js
+// @downloadURL  https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js
 // @grant        none
 // ==/UserScript==
 

@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         ASIN CCCHECK Debug
-// @namespace    https://my-userscripts.com/
-// @version      0.7
+// @name         ASIN CCCHECK
+// @namespace    https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js
+// @version      0.8
 // @description  Amazon ASIN CCChecker (Camel Camel Camel)
-// @match        *.amazon.*/*
+// @match        *://*/*
 // @updateURL    https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js
 // @downloadURL  https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js
 // @grant        none
@@ -11,6 +11,14 @@
 
 (function () {
     console.log('Skript gestartet.');
+
+    // Prüfen, ob die Seite eine Amazon-Seite ist
+    if (!window.location.hostname.includes('amazon.')) {
+        console.log('Keine Amazon-Seite. Skript wird nicht ausgeführt.');
+        return;
+    }
+
+    console.log('Amazon-Seite erkannt. Skript wird ausgeführt.');
 
     // Funktion: Prüfen, ob es sich um eine Suchseite handelt
     function isSearchPage() {
@@ -152,59 +160,5 @@
         console.log('ASIN-Kopieren-Button wurde konfiguriert.');
     } else {
         console.log('ASIN-Kopieren-Button wurde NICHT gefunden!');
-    }
-
-    // Preistabelle hinzufügen
-    const targetDiv = document.querySelector('div.a-section.a-spacing-small.aok-align-center');
-    if (targetDiv) {
-        console.log('Ziel-Div gefunden.');
-
-        const styleElement = document.createElement('style');
-        styleElement.type = 'text/css';
-        styleElement.innerHTML = `
-            .blurred-border {
-                position: relative;
-                display: inline-block;
-                width: 100%;
-                margin-top: 20px;
-            }
-            .blurred-border::before {
-                content: '';
-                position: absolute;
-                top: -5px; left: -5px;
-                right: -5px; bottom: -5px;
-                border: 5px solid teal;
-                filter: blur(5px);
-                z-index: -1;
-            }
-            .blurred-border img {
-                display: block;
-                width: 100%;
-                height: auto;
-            }
-        `;
-        document.head.appendChild(styleElement);
-        console.log('Stil hinzugefügt.');
-
-        const wrapperDiv = document.createElement('div');
-        wrapperDiv.className = 'blurred-border';
-
-        const chartImg = document.createElement('img');
-        chartImg.id = 'summary_chart';
-        chartImg.alt = 'Amazon Preisdiagramm';
-        const chartUrl = `https://charts.camelcamelcamel.com/de/${asin}/amazon.png?force=1&zero=0&w=800&h=400&desired=false&legend=1&ilt=1&tp=all&fo=0&lang=de`;
-        chartImg.src = chartUrl;
-
-        wrapperDiv.appendChild(chartImg);
-        targetDiv.appendChild(wrapperDiv);
-        console.log('Preisdiagramm wurde hinzugefügt.');
-
-        // Preis extrahieren und über dem Chart anzeigen
-        const price = extractPriceFromCamel();
-        if (price) {
-            addPriceAboveChart(price);
-        }
-    } else {
-        console.log('Ziel-Element zum Einfügen des Preisdiagramms wurde NICHT gefunden.');
     }
 })();

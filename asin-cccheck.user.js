@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         ASIN CCCHECK Debug
 // @namespace    https://my-userscripts.com/
-// @version      0.6
+// @version      0.7
 // @description  Amazon ASIN CCChecker (Camel Camel Camel)
-// @match        *://*.amazon.*/*
+// @match        *.amazon.*/*
 // @updateURL    https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js
 // @downloadURL  https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js
 // @grant        none

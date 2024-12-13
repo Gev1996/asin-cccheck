@@ -1,16 +1,59 @@
 // ==UserScript==
 // @name         ASIN CCCHECK
 // @namespace    https://github.com/Gev1996/asin-cccheck
-// @version      0.9
+// @version      1.0
 // @description  Amazon ASIN CCChecker (Camel Camel Camel)
 // @match        *://*/*
 // @updateURL    https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js
 // @downloadURL  https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js
-// @grant        none
+// @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
 (function () {
     console.log('Skript gestartet.');
+
+    const SCRIPT_VERSION = '0.9'; // Aktuelle Version des Scripts
+    const SCRIPT_URL = 'https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js';
+
+    // Funktion: Automatische Updateprüfung
+    function checkForUpdates() {
+        console.log('Überprüfe auf Updates...');
+
+        GM_xmlhttpRequest({
+            method: 'GET',
+            url: SCRIPT_URL,
+            onload: function (response) {
+                if (response.status === 200) {
+                    const remoteScript = response.responseText;
+                    const remoteVersionMatch = remoteScript.match(/@version\s+([0-9.]+)/);
+
+                    if (remoteVersionMatch) {
+                        const remoteVersion = remoteVersionMatch[1];
+                        console.log('Gefundene Remote-Version: ' + remoteVersion);
+
+                        // Versionen vergleichen
+                        if (remoteVersion !== SCRIPT_VERSION) {
+                            if (confirm(`Eine neue Version (${remoteVersion}) ist verfügbar. Möchtest du das Script jetzt aktualisieren?`)) {
+                                window.location.href = SCRIPT_URL;
+                            }
+                        } else {
+                            console.log('Das Script ist auf dem neuesten Stand.');
+                        }
+                    } else {
+                        console.error('Konnte die Version in der Remote-Datei nicht finden.');
+                    }
+                } else {
+                    console.error('Fehler beim Abrufen der Update-URL: ' + response.status);
+                }
+            },
+            onerror: function () {
+                console.error('Fehler beim Update-Check.');
+            }
+        });
+    }
+
+    // Updateprüfung durchführen
+    checkForUpdates();
 
     // Prüfen, ob die Seite eine Amazon-Seite ist
     if (!window.location.hostname.includes('amazon.')) {

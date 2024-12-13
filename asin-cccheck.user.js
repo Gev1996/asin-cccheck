@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         ASIN CCCHECK
+// @name         ASIN CCCHECK 1.4
 // @namespace    https://github.com/Gev1996/asin-cccheck
 // @version      1.4
 // @description  Amazon ASIN CCChecker (Camel Camel Camel)

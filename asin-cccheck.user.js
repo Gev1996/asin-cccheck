@@ -16,42 +16,43 @@
     const SCRIPT_URL = 'https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js';
 
     // Funktion: Automatische Updateprüfung
-   function checkForUpdates() {
-    console.log('Überprüfe auf Updates...');
+    function checkForUpdates() {
+        console.log('Überprüfe auf Updates...');
 
-    GM_xmlhttpRequest({
-        method: 'GET',
-        url: SCRIPT_URL + '?t=' + Date.now(), // Cache umgehen
-        onload: function (response) {
-            if (response.status === 200) {
-                const remoteScript = response.responseText;
-                const remoteVersionMatch = remoteScript.match(/@version\s+([0-9.]+)/);
+        GM_xmlhttpRequest({
+            method: 'GET',
+            url: SCRIPT_URL + '?_=' + new Date().getTime(), // Cache umgehen
+            onload: function (response) {
+                if (response.status === 200) {
+                    const remoteScript = response.responseText;
+                    console.log('Remote-Skript geladen.');
 
-                if (remoteVersionMatch) {
-                    const remoteVersion = remoteVersionMatch[1];
-                    console.log('Gefundene Remote-Version: ' + remoteVersion);
+                    const remoteVersionMatch = remoteScript.match(/@version\s+([0-9.]+)/i);
 
-                    if (remoteVersion !== SCRIPT_VERSION) {
-                        alert("New Version available!");
-                        if (confirm(`Neue Version (${remoteVersion}) verfügbar. Jetzt aktualisieren?`)) {
-                            window.location.href = SCRIPT_URL;
+                    if (remoteVersionMatch) {
+                        const remoteVersion = remoteVersionMatch[1].trim();
+                        console.log('Gefundene Remote-Version: ' + remoteVersion);
+
+                        if (remoteVersion !== SCRIPT_VERSION.trim()) {
+                            alert("Neue Version verfügbar!");
+                            if (confirm(`Neue Version (${remoteVersion}) verfügbar. Jetzt aktualisieren?`)) {
+                                window.location.href = SCRIPT_URL;
+                            }
+                        } else {
+                            console.log('Das Skript ist aktuell.');
                         }
                     } else {
-                        console.log('Das Skript ist aktuell.');
+                        console.error('Konnte die Version in der Remote-Datei nicht finden.');
                     }
                 } else {
-                    console.error('Konnte die Version in der Remote-Datei nicht finden.');
+                    console.error('Fehler beim Abrufen der Update-URL: ' + response.status);
                 }
-            } else {
-                console.error('Fehler beim Abrufen der Update-URL: ' + response.status);
+            },
+            onerror: function () {
+                console.error('Fehler beim Update-Check.');
             }
-        },
-        onerror: function () {
-            console.error('Fehler beim Update-Check.');
-        }
-    });
-}
-
+        });
+    }
 
     checkForUpdates();
 

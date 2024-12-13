@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ASIN CCCHECK
-// @namespace    https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js
-// @version      0.8
+// @namespace    https://github.com/Gev1996/asin-cccheck
+// @version      0.9
 // @description  Amazon ASIN CCChecker (Camel Camel Camel)
 // @match        *://*/*
 // @updateURL    https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js
@@ -48,24 +48,52 @@
         return null;
     }
 
-    // Funktion: Preis über dem Chart anzeigen
-    function addPriceAboveChart(price) {
-        const chartElement = document.getElementById('summary_chart');
-        if (chartElement) {
-            // Preis-Div erstellen
-            const priceDiv = document.createElement('div');
-            priceDiv.textContent = `Preis: ${price}`;
-            priceDiv.style.color = 'green';
-            priceDiv.style.fontSize = '20px';
-            priceDiv.style.fontWeight = 'bold';
-            priceDiv.style.textAlign = 'center';
-            priceDiv.style.marginBottom = '10px';
+    // Funktion: Chart und Preis einfügen
+    function addCamelChartAndPrice(asin) {
+        const targetDiv = document.querySelector('div.a-section.a-spacing-small.aok-align-center');
 
-            // Preis-Div vor dem Chart einfügen
-            chartElement.parentElement.insertBefore(priceDiv, chartElement);
-            console.log('Preis wurde über dem Chart hinzugefügt.');
+        if (targetDiv) {
+            console.log('Ziel-Div gefunden.');
+
+            // Chart-URL erstellen
+            const chartUrl = `https://charts.camelcamelcamel.com/de/${asin}/amazon.png?force=1&zero=0&w=800&h=400&desired=false&legend=1&ilt=1&tp=all&fo=0&lang=de`;
+
+            // Wrapper-Div für den Chart erstellen
+            const wrapperDiv = document.createElement('div');
+            wrapperDiv.style.marginTop = '20px';
+
+            // Chart-Bild hinzufügen
+            const chartImg = document.createElement('img');
+            chartImg.src = chartUrl;
+            chartImg.alt = 'CamelCamelCamel Preisdiagramm';
+            chartImg.style.width = '100%';
+            chartImg.style.maxWidth = '800px';
+            chartImg.style.border = '1px solid #ddd';
+            chartImg.style.borderRadius = '5px';
+            chartImg.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
+            wrapperDiv.appendChild(chartImg);
+
+            // Preis über dem Chart anzeigen (falls verfügbar)
+            const price = extractPriceFromCamel();
+            if (price) {
+                const priceDiv = document.createElement('div');
+                priceDiv.textContent = `Preis: ${price}`;
+                priceDiv.style.color = 'green';
+                priceDiv.style.fontSize = '20px';
+                priceDiv.style.fontWeight = 'bold';
+                priceDiv.style.textAlign = 'center';
+                priceDiv.style.marginBottom = '10px';
+                wrapperDiv.insertBefore(priceDiv, chartImg);
+                console.log('Preis wurde über dem Chart hinzugefügt.');
+            } else {
+                console.log('Preis konnte nicht extrahiert werden.');
+            }
+
+            // Wrapper-Div dem Ziel-Div hinzufügen
+            targetDiv.appendChild(wrapperDiv);
+            console.log('Chart wurde hinzugefügt.');
         } else {
-            console.log('Chart-Element nicht gefunden.');
+            console.log('Ziel-Div für den Chart nicht gefunden.');
         }
     }
 
@@ -82,83 +110,6 @@
         return;
     }
 
-    // Buttons definieren und Container erstellen
-    const buttons = [
-        {
-            url: `https://de.camelcamelcamel.com/product/${asin}`,
-            text: 'CCC',
-            backgroundColor: '#4A9E9C',
-            color: 'white'
-        },
-        {
-            text: 'ASIN Kopieren',
-            backgroundColor: '#000000',
-            color: 'white',
-            id: 'asin-copy-button'
-        }
-    ];
-
-    const container = document.createElement('div');
-    container.style = `
-        position: fixed;
-        width: 100%;
-        bottom: 0;
-        left: 0;
-        background: #ccc;
-        padding: 15px 0;
-        border-top: 2px solid #999;
-        z-index: 10000;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    `;
-    container.innerHTML = buttons
-        .map((button) => {
-            if (button.url) {
-                return `<a target="_blank" href="${button.url}" style="
-                    background-color: ${button.backgroundColor};
-                    color: ${button.color};
-                    font-weight: bold;
-                    text-align: center;
-                    padding: 10px 20px;
-                    margin: 0 10px;
-                    border-radius: 5px;
-                    display: inline-block;">
-                    ${button.text}
-                    </a>`;
-            } else {
-                return `<button id="${button.id}" style="
-                    background-color: ${button.backgroundColor};
-                    color: ${button.color};
-                    font-weight: bold;
-                    text-align: center;
-                    padding: 10px 20px;
-                    margin: 0 10px;
-                    border-radius: 5px;
-                    cursor: pointer;">
-                    ${button.text}
-                    </button>`;
-            }
-        })
-        .join('');
-    document.body.appendChild(container);
-    console.log('Container mit Buttons wurde hinzugefügt.');
-
-    // ASIN-Kopieren-Button konfigurieren
-    const asinCopyButton = document.getElementById('asin-copy-button');
-    if (asinCopyButton) {
-        asinCopyButton.addEventListener('click', function () {
-            navigator.clipboard
-                .writeText(asin)
-                .then(() => {
-                    console.log('ASIN wurde kopiert!');
-                })
-                .catch((err) => {
-                    console.log('Fehler beim Kopieren der ASIN: ' + err);
-                });
-        });
-        console.log('ASIN-Kopieren-Button wurde konfiguriert.');
-    } else {
-        console.log('ASIN-Kopieren-Button wurde NICHT gefunden!');
-    }
+    // Chart und Preis einfügen
+    addCamelChartAndPrice(asin);
 })();

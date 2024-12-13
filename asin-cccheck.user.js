@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ASIN CCCHECK 1.4
 // @namespace    https://github.com/Gev1996/asin-cccheck
-// @version      1.4
+// @version      1.3
 // @description  Amazon ASIN CCChecker (Camel Camel Camel)
 // @match        *://*/*
 // @updateURL    https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js
@@ -12,35 +12,46 @@
 (function () {
     console.log('Skript gestartet.');
 
-    const SCRIPT_VERSION = '1.4';
+    const SCRIPT_VERSION = '1.3';
     const SCRIPT_URL = 'https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js';
 
     // Funktion: Automatische Updateprüfung
-    function checkForUpdates() {
-        console.log('Überprüfe auf Updates...');
-        GM_xmlhttpRequest({
-            method: 'GET',
-            url: SCRIPT_URL,
-            onload: function (response) {
-                if (response.status === 200) {
-                    const remoteScript = response.responseText;
-                    const remoteVersionMatch = remoteScript.match(/@version\s+([0-9.]+)/);
-                    if (remoteVersionMatch) {
-                        const remoteVersion = remoteVersionMatch[1];
-                        console.log('Gefundene Remote-Version: ' + remoteVersion);
-                        if (remoteVersion !== SCRIPT_VERSION) {
-                            alert("New Version available!");
-                            if (confirm(`Neue Version (${remoteVersion}) verfügbar. Jetzt aktualisieren?`)) {
-                                window.location.href = SCRIPT_URL;
-                            }
-                        } else {
-                            console.log('Das Script ist aktuell.');
+   function checkForUpdates() {
+    console.log('Überprüfe auf Updates...');
+
+    GM_xmlhttpRequest({
+        method: 'GET',
+        url: SCRIPT_URL + '?t=' + Date.now(), // Cache umgehen
+        onload: function (response) {
+            if (response.status === 200) {
+                const remoteScript = response.responseText;
+                const remoteVersionMatch = remoteScript.match(/@version\s+([0-9.]+)/);
+
+                if (remoteVersionMatch) {
+                    const remoteVersion = remoteVersionMatch[1];
+                    console.log('Gefundene Remote-Version: ' + remoteVersion);
+
+                    if (remoteVersion !== SCRIPT_VERSION) {
+                        alert("New Version available!");
+                        if (confirm(`Neue Version (${remoteVersion}) verfügbar. Jetzt aktualisieren?`)) {
+                            window.location.href = SCRIPT_URL;
                         }
+                    } else {
+                        console.log('Das Skript ist aktuell.');
                     }
+                } else {
+                    console.error('Konnte die Version in der Remote-Datei nicht finden.');
                 }
+            } else {
+                console.error('Fehler beim Abrufen der Update-URL: ' + response.status);
             }
-        });
-    }
+        },
+        onerror: function () {
+            console.error('Fehler beim Update-Check.');
+        }
+    });
+}
+
 
     checkForUpdates();
 

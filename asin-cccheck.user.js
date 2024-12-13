@@ -18,7 +18,7 @@
     // Funktion: Automatische Updateprüfung
     function checkForUpdates() {
         console.log('Überprüfe auf Updates...');
-        alert(`Update gestartet! Lokale Version: ${SCRIPT_VERSION}`);
+        //alert(`Update gestartet! Lokale Version: ${SCRIPT_VERSION}`);
 
         GM_xmlhttpRequest({
             method: 'GET',
@@ -32,7 +32,8 @@
 
                     if (remoteVersionMatch) {
                         const remoteVersion = remoteVersionMatch[1].trim();
-                        alert(`Gefundene Remote-Version: ${remoteVersion}`);
+                        //alert(`Gefundene Remote-Version: ${remoteVersion}`);
+alert(`Scriptversion: ${SCRIPT_VERSION} > GIT-Version: ${remoteVersion}`);
                         console.log('Gefundene Remote-Version: ' + remoteVersion);
 
                         if (remoteVersion !== SCRIPT_VERSION.trim()) {

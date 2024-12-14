@@ -18,7 +18,7 @@
     // Funktion: Automatische Updateprüfung
     function checkForUpdates() {
         console.log('Überprüfe auf Updates...');
-        //alert(`Update gestartet! Lokale Version: ${SCRIPT_VERSION}`);
+        alert(`Update gestartet! Lokale Version: ${SCRIPT_VERSION}`);
 
         GM_xmlhttpRequest({
             method: 'GET',
@@ -27,12 +27,13 @@
                 if (response.status === 200) {
                     const remoteScript = response.responseText;
                     console.log('Remote-Skript geladen.');
+                    alert('Remote-Skript erfolgreich geladen.');
 
                     const remoteVersionMatch = remoteScript.match(/@version\s+([0-9.]+)/i);
 
                     if (remoteVersionMatch) {
                         const remoteVersion = remoteVersionMatch[1].trim();
-                        alert(`Scriptversion: ${SCRIPT_VERSION} > GIT-Version: ${remoteVersion}`);
+                        alert(`Gefundene Remote-Version: ${remoteVersion}`);
                         console.log('Gefundene Remote-Version: ' + remoteVersion);
 
                         if (remoteVersion !== SCRIPT_VERSION.trim()) {
@@ -41,16 +42,20 @@
                                 window.location.href = SCRIPT_URL;
                             }
                         } else {
+                            alert('Das Skript ist aktuell.');
                             console.log('Das Skript ist aktuell.');
                         }
                     } else {
+                        alert('Konnte die Version in der Remote-Datei nicht finden.');
                         console.error('Konnte die Version in der Remote-Datei nicht finden.');
                     }
                 } else {
+                    alert(`Fehler beim Abrufen der Update-URL: ${response.status}`);
                     console.error('Fehler beim Abrufen der Update-URL: ' + response.status);
                 }
             },
             onerror: function () {
+                alert('Fehler beim Update-Check.');
                 console.error('Fehler beim Update-Check.');
             }
         });

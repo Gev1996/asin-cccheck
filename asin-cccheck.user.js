@@ -1,56 +1,64 @@
 // ==UserScript==
 // @name         ASIN CCCHECK
 // @namespace    https://github.com/Gev1996/asin-cccheck
-// @version      1.8
+// @version      1.9
 // @description  Amazon ASIN CCChecker (Camel Camel Camel)
 // @match        *://*/*
 // @updateURL    https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js
 // @downloadURL  https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js
 // @grant        GM_xmlhttpRequest
+// @grant        GM_info
 // ==/UserScript==
 
 (function () {
     console.log('Skript gestartet.');
 
-    const SCRIPT_VERSION = '1.8';
+    // Version automatisch aus den Metadaten abrufen
+    const metaString = GM_info.scriptMetaStr || '';
+    const versionMatch = metaString.match(/@version\s+([0-9.]+)/i);
+    const SCRIPT_VERSION = versionMatch ? versionMatch[1].trim() : 'Unbekannt';
+
     const SCRIPT_URL = 'https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js';
 
     // Funktion: Automatische Updateprüfung
     function checkForUpdates() {
-    console.log('Überprüfe auf Updates...');
-    fetch(SCRIPT_URL + '?_=' + new Date().getTime())
-        .then(response => {
-            if (!response.ok) {
-                alert(`Fehler beim Abrufen der Update-URL: ${response.status}`);
-                throw new Error('Netzwerkantwort war nicht ok.');
-            }
-            return response.text();
-        })
-        .then(remoteScript => {
-            const remoteVersionMatch = remoteScript.match(/@version\s+([0-9.]+)/i);
-            if (remoteVersionMatch) {
-                const remoteVersion = remoteVersionMatch[1].trim();
-                alert(`Gefundene Remote-Version: ${remoteVersion}`);
-                if (remoteVersion !== SCRIPT_VERSION.trim()) {
-                    alert("Neue Version verfügbar!");
-                    if (confirm(`Neue Version (${remoteVersion}) verfügbar. Jetzt aktualisieren?`)) {
-                        window.location.href = SCRIPT_URL;
+        console.log('Überprüfe auf Updates...');
+
+        GM_xmlhttpRequest({
+            method: 'GET',
+            url: SCRIPT_URL + '?_=' + new Date().getTime(),
+            onload: function (response) {
+                if (response.status === 200) {
+                    const remoteScript = response.responseText;
+                    const remoteVersionMatch = remoteScript.match(/@version\s+([0-9.]+)/i);
+
+                    if (remoteVersionMatch) {
+                        const remoteVersion = remoteVersionMatch[1].trim();
+                        console.log('Gefundene Remote-Version: ' + remoteVersion);
+
+                        if (remoteVersion !== SCRIPT_VERSION) {
+                            if (confirm(`Neue Version (${remoteVersion}) verfügbar. Jetzt aktualisieren?`)) {
+                                window.location.href = SCRIPT_URL;
+                            }
+                        } else {
+                            console.log('Das Skript ist aktuell.');
+                        }
+                    } else {
+                        console.error('Konnte die Version in der Remote-Datei nicht finden.');
                     }
                 } else {
-                    alert('Das Skript ist aktuell.');
+                    console.error('Fehler beim Abrufen der Update-URL: ' + response.status);
                 }
-            } else {
-                alert('Konnte die Version in der Remote-Datei nicht finden.');
+            },
+            onerror: function () {
+                console.error('Fehler beim Update-Check.');
             }
-        })
-        .catch(error => {
-            console.error('Fehler beim Update-Check:', error);
-            alert('Fehler beim Update-Check.');
         });
-}
+    }
 
     checkForUpdates();
 
+    // Skriptausführung nur auf Amazon-Seiten
     if (!window.location.hostname.includes('amazon.')) {
         console.log('Keine Amazon-Seite. Skript wird nicht ausgeführt.');
         return;
@@ -74,7 +82,7 @@
                 if (response.status === 200) {
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(response.responseText, 'text/html');
-                    const priceElement = doc.querySelector('.bgp'); // Selektor für den Preis
+                    const priceElement = doc.querySelector('.bgp'); 
                     if (priceElement) {
                         const priceText = priceElement.textContent.trim();
                         console.log('Preis von CamelCamelCamel gefunden: ' + priceText);

@@ -17,49 +17,37 @@
 
     // Funktion: Automatische Updateprüfung
     function checkForUpdates() {
-        console.log('Überprüfe auf Updates...');
-        alert(`Update gestartet! Lokale Version: ${SCRIPT_VERSION}`);
-
-        GM_xmlhttpRequest({
-            method: 'GET',
-            url: SCRIPT_URL + '?_=' + new Date().getTime(), // Cache umgehen
-            onload: function (response) {
-                if (response.status === 200) {
-                    const remoteScript = response.responseText;
-                    console.log('Remote-Skript geladen.');
-                    alert('Remote-Skript erfolgreich geladen.');
-
-                    const remoteVersionMatch = remoteScript.match(/@version\s+([0-9.]+)/i);
-
-                    if (remoteVersionMatch) {
-                        const remoteVersion = remoteVersionMatch[1].trim();
-                        alert(`Gefundene Remote-Version: ${remoteVersion}`);
-                        console.log('Gefundene Remote-Version: ' + remoteVersion);
-
-                        if (remoteVersion !== SCRIPT_VERSION.trim()) {
-                            alert("Neue Version verfügbar!");
-                            if (confirm(`Neue Version (${remoteVersion}) verfügbar. Jetzt aktualisieren?`)) {
-                                window.location.href = SCRIPT_URL;
-                            }
-                        } else {
-                            alert('Das Skript ist aktuell.');
-                            console.log('Das Skript ist aktuell.');
-                        }
-                    } else {
-                        alert('Konnte die Version in der Remote-Datei nicht finden.');
-                        console.error('Konnte die Version in der Remote-Datei nicht finden.');
+    console.log('Überprüfe auf Updates...');
+    fetch(SCRIPT_URL + '?_=' + new Date().getTime())
+        .then(response => {
+            if (!response.ok) {
+                alert(`Fehler beim Abrufen der Update-URL: ${response.status}`);
+                throw new Error('Netzwerkantwort war nicht ok.');
+            }
+            return response.text();
+        })
+        .then(remoteScript => {
+            const remoteVersionMatch = remoteScript.match(/@version\s+([0-9.]+)/i);
+            if (remoteVersionMatch) {
+                const remoteVersion = remoteVersionMatch[1].trim();
+                alert(`Gefundene Remote-Version: ${remoteVersion}`);
+                if (remoteVersion !== SCRIPT_VERSION.trim()) {
+                    alert("Neue Version verfügbar!");
+                    if (confirm(`Neue Version (${remoteVersion}) verfügbar. Jetzt aktualisieren?`)) {
+                        window.location.href = SCRIPT_URL;
                     }
                 } else {
-                    alert(`Fehler beim Abrufen der Update-URL: ${response.status}`);
-                    console.error('Fehler beim Abrufen der Update-URL: ' + response.status);
+                    alert('Das Skript ist aktuell.');
                 }
-            },
-            onerror: function () {
-                alert('Fehler beim Update-Check.');
-                console.error('Fehler beim Update-Check.');
+            } else {
+                alert('Konnte die Version in der Remote-Datei nicht finden.');
             }
+        })
+        .catch(error => {
+            console.error('Fehler beim Update-Check:', error);
+            alert('Fehler beim Update-Check.');
         });
-    }
+}
 
     checkForUpdates();
 

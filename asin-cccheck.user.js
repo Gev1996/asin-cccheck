@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         ASIN CCCHECK
 // @namespace    https://github.com/Gev1996/asin-cccheck
-// @version      2.1
-// @description  Amazon ASIN CCChecker (Camel Camel Camel)
+// @version      2.2
+// @description  Amazon ASIN CCChecker (Camel Camel Camel Price Chart)
 // @match        *://*/*
 // @updateURL    https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js
 // @downloadURL  https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js

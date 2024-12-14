@@ -18,7 +18,7 @@
     // Funktion: Automatische Updateprüfung
     function checkForUpdates() {
         console.log('Überprüfe auf Updates...');
-        alert(`Update gestartet! Lokale Version: ${SCRIPT_VERSION}`);
+        //alert(`Update gestartet! Lokale Version: ${SCRIPT_VERSION}`);
 
         GM_xmlhttpRequest({
             method: 'GET',

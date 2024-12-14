@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         ASIN CCCHECK 1.7
+// @name         ASIN CCCHECK
 // @namespace    https://github.com/Gev1996/asin-cccheck
-// @version      1.7
+// @version      1.8
 // @description  Amazon ASIN CCChecker (Camel Camel Camel)
 // @match        *://*/*
 // @updateURL    https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js
@@ -12,7 +12,7 @@
 (function () {
     console.log('Skript gestartet.');
 
-    const SCRIPT_VERSION = '1.7';
+    const SCRIPT_VERSION = '1.8';
     const SCRIPT_URL = 'https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js';
 
     // Funktion: Automatische Updateprüfung

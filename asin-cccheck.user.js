@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ASIN CCCHECK
 // @namespace    https://github.com/Gev1996/asin-cccheck
-// @version      2.0
+// @version      2.1
 // @description  Amazon ASIN CCChecker (Camel Camel Camel)
 // @match        *://*/*
 // @updateURL    https://github.com/Gev1996/asin-cccheck/raw/refs/heads/main/asin-cccheck.user.js
@@ -11,7 +11,7 @@
 // ==/UserScript==
 
 (function () {
-    alert('Skript gestartet.');
+    console.log('Skript gestartet.');
 
     // Version automatisch aus den Metadaten abrufen
     const metaString = GM_info.scriptMetaStr || '';
@@ -22,7 +22,7 @@
 
     // Funktion: Automatische Updateprüfung
     function checkForUpdates() {
-        alert('Überprüfe auf Updates...');
+        console.log('Überprüfe auf Updates...');
 
         GM_xmlhttpRequest({
             method: 'GET',
@@ -34,14 +34,14 @@
 
                     if (remoteVersionMatch) {
                         const remoteVersion = remoteVersionMatch[1].trim();
-                        alert(`Gefundene Remote-Version: ${remoteVersion}`);
+                        console.log(`Gefundene Remote-Version: ${remoteVersion}`);
 
                         if (remoteVersion !== SCRIPT_VERSION) {
-                            if (confirm(`Neue Version (${remoteVersion}) verfügbar. Jetzt aktualisieren?`)) {
+                            if (confirm(`Neue Version (${remoteVersion}) von ASIN CCCHECK verfügbar. Jetzt aktualisieren?`)) {
                                 window.location.href = SCRIPT_URL;
                             }
                         } else {
-                            alert('Das Skript ist aktuell.');
+                            console.log('Das Skript ist aktuell.');
                         }
                     } else {
                         alert('Konnte die Version in der Remote-Datei nicht finden.');
@@ -60,11 +60,11 @@
 
     // Skriptausführung nur auf Amazon-Seiten
     if (!window.location.hostname.includes('amazon.')) {
-        alert('Keine Amazon-Seite. Skript wird nicht ausgeführt.');
+        console.log('Keine Amazon-Seite. Skript wird nicht ausgeführt.');
         return;
     }
 
-    alert('Amazon-Seite erkannt. Skript wird ausgeführt.');
+    console.log('Amazon-Seite erkannt. Skript wird ausgeführt.');
 
     function extractASIN() {
         const urlMatch = window.location.href.match(/\/dp\/([A-Z0-9]{10})/);
@@ -73,7 +73,7 @@
 
     function fetchCamelPrice(asin, callback) {
         const camelUrl = `https://de.camelcamelcamel.com/product/${asin}`;
-        alert(`Preis wird von CamelCamelCamel geladen: ${camelUrl}`);
+        console.log(`Preis wird von CamelCamelCamel geladen: ${camelUrl}`);
 
         GM_xmlhttpRequest({
             method: 'GET',
@@ -85,14 +85,14 @@
                     const priceElement = doc.querySelector('.bgp'); 
                     if (priceElement) {
                         const priceText = priceElement.textContent.trim();
-                        alert(`Preis von CamelCamelCamel gefunden: ${priceText}`);
+                        console.log(`Preis von CamelCamelCamel gefunden: ${priceText}`);
                         callback(priceText);
                     } else {
-                        alert('Preis von CamelCamelCamel nicht gefunden.');
+                        console.log('Preis von CamelCamelCamel nicht gefunden.');
                         callback(null);
                     }
                 } else {
-                    alert(`Fehler beim Abrufen der CamelCamelCamel-Seite: ${response.status}`);
+                    console.log(`Fehler beim Abrufen der CamelCamelCamel-Seite: ${response.status}`);
                     callback(null);
                 }
             },
@@ -142,6 +142,6 @@
     if (asin) {
         addCamelChartAndPrice(asin);
     } else {
-        alert('ASIN konnte nicht extrahiert werden.');
+        console.log('ASIN konnte nicht extrahiert werden.');
     }
 })();
